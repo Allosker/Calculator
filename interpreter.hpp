@@ -8,12 +8,12 @@
 #include <cmath>
 #include "types.hpp"
 
-double interpret(const Instruction& ins) noexcept
+double interpret(const Node& ins) noexcept
 {
     std::optional<double> val1{};
     std::optional<double> val2{};
 
-    if (auto x = std::get_if<std::shared_ptr<Instruction>>(&ins.x))
+    if (auto x = std::get_if<std::shared_ptr<Node>>(&ins.x))
     {
         val1 = interpret(*x->get());
     }
@@ -25,7 +25,7 @@ double interpret(const Instruction& ins) noexcept
             val1 = std::nullopt;
     }
 
-    if (auto y = std::get_if<std::shared_ptr<Instruction>>(&ins.y))
+    if (auto y = std::get_if<std::shared_ptr<Node>>(&ins.y))
     {
         val2 = interpret(*y->get());
     }

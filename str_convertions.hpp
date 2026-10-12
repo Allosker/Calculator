@@ -37,18 +37,29 @@ inline int char_to_nbr(char c) noexcept
 
 inline int str_to_nbr(const std::string& str) noexcept
 {
+    
+
+    auto i{ static_cast<int>(str.size()) };
+
+    bool negate{};
+
     int nb{};
     int nb_iterations{};
-    for (auto i{ static_cast<int>(str.size()) }; i >= 0; i--)
+    for (; i >= 0; i--)
     {
         const auto c = str[i];
         if (c == '\0') continue;
+        if (c == '-')
+        {
+            negate = true;
+            continue;
+        }
 
         nb += pow10(char_to_nbr(c), nb_iterations);
         nb_iterations++;
     }
 
-    return nb;
+    return negate ? -nb : nb;
 }
 
 inline bool is_scalar(char x)

@@ -36,12 +36,12 @@ inline Type char_to_type(char input)
     }
 }
 
-struct Instruction
+struct Node
 {
     Type type{ Type::None };
 
-    std::variant<std::optional<double>, std::shared_ptr<Instruction>> x{ std::nullopt };
-    std::variant<std::optional<double>, std::shared_ptr<Instruction>> y{ std::nullopt };
+    std::variant<std::optional<double>, std::shared_ptr<Node>> x{ std::nullopt };
+    std::variant<std::optional<double>, std::shared_ptr<Node>> y{ std::nullopt };
 };
 
 #endif //UNTITLED1_TYPES_HPP
