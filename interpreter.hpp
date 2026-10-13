@@ -43,15 +43,15 @@ double interpret(const Node& ins) noexcept
     switch (ins.type)
     {
         case Type::Add:
-            return  *val1 + *val2;
+            return (*val1 + *val2) * ins.sign;
         case Type::Subtract:
-            return *val1 - *val2;
+            return (*val1 - *val2) * ins.sign;
         case Type::Multiply:
-            return *val1 * *val2;
+            return (*val1 * *val2) * ins.sign;
         case Type::Divide:
-            return *val1 / *val2;
+            return (*val1 / *val2) * ins.sign;
         case Type::Exponentiate:
-            return std::pow(*val1, *val2);
+            return std::pow(*val1, *val2) * ins.sign;
     }
 }
 

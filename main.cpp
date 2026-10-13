@@ -22,7 +22,7 @@ double compute_value(const std::string& input) noexcept
 int main()
 {
 
-	//std::println("smth: {}", preprocess("2-3^3^3"));
-	//std::println("Smth: {}", compute_value("((8-3)*(-2+6))^2-3^3"));
-	std::println("Smth: {}", compute_value("-2^3^2")); // change that, it crashes, and also, normally -2 shouldn't be considered an unary minus
+	std::println("smth: {}", compute_value("10+(-(3^2))+(-(2^2))"));
+	//std::println("Smth: {}", compute_value("(-4)^2-(-4^2)"));
+	//std::println("Smth: {}", compute_value("(-2)^3^2")); // change that, it crashes, and also, normally -2 shouldn't be considered an unary minus
 }

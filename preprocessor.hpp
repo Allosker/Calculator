@@ -37,10 +37,14 @@ void emplace_parentheses(std::string& str)
 
 		if (i != 0 && previous == '-' && is_scalar(current))
 		{
+			std::string::const_iterator es{};
+			es = get_end_sequence(str.begin() + i, str.end());
+
+			if (es != str.end() && char_to_type(*es) != Type::Exponentiate) continue;
+
 			str.insert(str.begin() + i, '(');
 			i++;
 
-			std::string::const_iterator es{};
 			for (;;)
 			{
 				es = get_end_sequence(str.begin() + i, str.end());
@@ -61,6 +65,9 @@ std::string preprocess(std::string raw_input) noexcept
 	std::string format{};
 
 	emplace_parentheses(raw_input);
+
+	if (raw_input[0] == '-')
+		format += '0';
 
 	for (size_t i{}; i < raw_input.size(); i++)
 	{

@@ -38,10 +38,11 @@ inline Type char_to_type(char input)
 
 struct Node
 {
-    Type type{ Type::None };
-
     std::variant<std::optional<double>, std::shared_ptr<Node>> x{ std::nullopt };
     std::variant<std::optional<double>, std::shared_ptr<Node>> y{ std::nullopt };
+
+    double sign{ 1 };
+    Type type{ Type::None };
 };
 
 #endif //UNTITLED1_TYPES_HPP
