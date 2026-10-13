@@ -23,7 +23,5 @@ double compute_value(const std::string& input) noexcept
 int main()
 {
 
-	std::println("Result: {}", compute_value("(2.5)^2"));
-	//std::println("Smth: {}", compute_value("(-4)^2-(-4^2)"));
-	//std::println("Smth: {}", compute_value("(-2)^3^2")); // change that, it crashes, and also, normally -2 shouldn't be considered an unary minus
+	std::println("Result: {}", compute_value("0-(2.5)^2+2^(-3)*16")); // problem, seems to evaluate whole expression, rather than just he rightmost member
 }

@@ -18,6 +18,17 @@ inline int pow10(int x, size_t n) noexcept
     return ret;
 }
 
+inline double pow_minus_10(double x, long long n) noexcept
+{
+    double ret{ x };
+    do
+    {
+        ret *= 0.1;
+        --n;
+    } while (n > 0);
+    return ret;
+}
+
 inline int char_to_nbr(char c) noexcept
 {
     switch (c)
@@ -35,36 +46,67 @@ inline int char_to_nbr(char c) noexcept
     }
 }
 
-inline int str_to_nbr(const std::string& str) noexcept
+inline long long str_to_int(const std::string& str, long long start, long long end) noexcept
 {
-    
+    long long nb{};
+    long long nb_iterations{};
 
-    auto i{ static_cast<int>(str.size()) };
-
-    bool negate{};
-
-    int nb{};
-    int nb_iterations{};
-    for (; i >= 0; i--)
+    do
     {
-        const auto c = str[i];
-        if (c == '\0') continue;
-        if (c == '-')
-        {
-            negate = true;
-            continue;
-        }
+        const auto c = str[end];
 
         nb += pow10(char_to_nbr(c), nb_iterations);
         nb_iterations++;
+        
+        end--;
+    } 
+    while (end >= start);
+
+    return nb;
+}
+
+inline double str_to_decimal(const std::string& str, size_t start, size_t end) noexcept
+{
+    double nb{ static_cast<double>(str_to_int(str, start, end)) };
+
+    return pow_minus_10(nb, end - start + 1);
+}
+
+inline double str_to_nbr(const std::string& str) noexcept
+{
+    bool negate{};
+
+    size_t start{};
+    size_t end{ str.size() - 1 };
+
+    if (str[0] == '-')
+    {
+        negate = true;
+        start++;
     }
 
-    return negate ? -nb : nb;
+    for (auto i = start; i != end; i++)
+    {
+        if (str[i] == '.')
+        {
+            end = i - 1; // add -1 to end to avoid '.' character
+            break;
+        }
+    }
+
+
+    double ret{ static_cast<double>(str_to_int(str, start, end)) };
+
+    if (end < str.size() - 1)
+        ret += str_to_decimal(str, end + 2, str.size() - 1); // add 2 to end to avoid '.' character
+
+    
+    return negate ? -ret : ret;
 }
 
 inline bool is_scalar(char x)
 {
-    return x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9';
+    return x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9' || x == '.';
 }
 
 #endif //UNTITLED1_STR_CONVERTIONS_HPP
