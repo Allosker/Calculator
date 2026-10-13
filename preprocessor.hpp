@@ -64,8 +64,6 @@ std::string preprocess(std::string raw_input) noexcept
 {
 	std::string format{};
 
-	emplace_parentheses(raw_input);
-
 	if (raw_input[0] == '-')
 		format += '0';
 
@@ -73,6 +71,18 @@ std::string preprocess(std::string raw_input) noexcept
 	{
 		const auto& previous = raw_input[i == 0 ? i : i - 1];
 		const auto& current = raw_input[i];
+		const auto& next = raw_input[i == raw_input.size() - 1 ? i : i + 1];
+
+		if (previous == '-' && current == '(' && is_scalar(next))
+		{
+			std::string::const_iterator es{};
+			es = get_end_sequence(raw_input.begin() + i + 1, raw_input.end());
+			if (es != raw_input.end() && *es == ')')
+			{
+				raw_input.erase(raw_input.begin() + i);
+				raw_input.erase(--es);
+			}
+		}
 
 		if (current != ' ')
 		{
@@ -87,6 +97,8 @@ std::string preprocess(std::string raw_input) noexcept
 			format += current;
 		}
 	}
+
+	emplace_parentheses(format);
 
 	return format;
 }
