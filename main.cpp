@@ -23,5 +23,5 @@ double compute_value(const std::string& input) noexcept
 int main()
 {
 
-	std::println("Result: {}", compute_value("0-(2.5)^2+2^(-3)*16")); // problem, seems to evaluate whole expression, rather than just he rightmost member
+	std::println("Result: {}", compute_value("0-(2.5)^2+2^(-3)*16"));
 }

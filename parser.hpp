@@ -71,7 +71,7 @@ inline Node parse(std::string format) noexcept
 	if (format.empty()) return {};
 
 	Node ret;
-	auto* ins = &ret;
+	auto node = &ret;
 	auto t = Type::None; // represents current operation type
 	bool first_iter{ true };
 
@@ -99,20 +99,35 @@ inline Node parse(std::string format) noexcept
 		if (t != Type::None)
 		{
 
-			if (ins->type != Type::None)
-			{
-				if ((t == Type::Exponentiate && (ins->type == Type::Add || ins->type == Type::Subtract || ins->type == Type::Multiply || ins->type == Type::Divide))
-				|| (t == Type::Exponentiate && ins->type == Type::Exponentiate)
-				|| ((t == Type::Multiply || t == Type::Divide) && (ins->type == Type::Add || ins->type == Type::Subtract))
-				|| (t == Type::Multiply && ins->type == Type::Multiply))
+			if (node->type != Type::None)
+			{  
+				if ((t == Type::Exponentiate && (node->type == Type::Add || node->type == Type::Subtract || node->type == Type::Multiply || node->type == Type::Divide))
+					|| (t == Type::Exponentiate && node->type == Type::Exponentiate)
+					|| ((t == Type::Multiply || t == Type::Divide) && (node->type == Type::Add || node->type == Type::Subtract))
+					|| (t == Type::Multiply && node->type == Type::Multiply)
+				)
 					// Right-to-Left precedence
 				{
 					Node temp{};
 
-					temp.x = std::move(ins->y);
-					ins->y = std::make_shared<Node>(std::move(temp));
+					temp.x = std::move(node->y);
+					node->y = std::make_shared<Node>(std::move(temp));
 
-					ins = std::get<std::shared_ptr<Node>>(ins->y).get();
+					node = std::get<std::shared_ptr<Node>>(node->y).get();
+				}
+				else if (t == Type::Multiply && node->type == Type::Exponentiate)
+					// Move the whole current node in order to create a new one with the "current" on the left
+				{
+					Node temp{};
+
+					temp.x = std::move(node->x);
+					temp.y = std::move(node->y);
+					temp.sign = node->sign;
+					temp.type = node->type;
+
+					node->x = std::make_shared<Node>(std::move(temp));
+					node->y = std::nullopt;
+					node->sign = 1.; 
 				}
 				else
 					// Add a new node to the right
@@ -120,13 +135,13 @@ inline Node parse(std::string format) noexcept
 					auto temp = std::move(ret);
 					ret = {};
 
-					ins = &ret;
+					node = &ret;
 
-					ins->x = std::make_shared<Node>(std::move(temp));
+					node->x = std::make_shared<Node>(std::move(temp));
 				}
 			}
 
-			ins->type = t;
+			node->type = t;
 			t = Type::None; // Reset t
 
 			if (erase_next_character)
@@ -136,7 +151,7 @@ inline Node parse(std::string format) noexcept
 		// Evaluate sub-expressions
 		if (i != format.end() && *i == '(')
 		{
-			evaluate_subexpression(ins, format, i);
+			evaluate_subexpression(node, format, i);
 		}
 
 		// Get string of numbers (represents a scalar)
@@ -155,7 +170,7 @@ inline Node parse(std::string format) noexcept
 						ip != format.end() && *ip == '(')
 					{
 						i = format.erase(i);
-						evaluate_subexpression(ins, format, i, -1);
+						evaluate_subexpression(node, format, i, -1);
 						break;
 					}
 					else
@@ -198,8 +213,8 @@ inline Node parse(std::string format) noexcept
 		{
 			nb = std::make_optional(str_to_nbr(str_nb));
 
-			auto x = std::get_if<std::optional<double>>(&ins->x);
-			auto y = std::get_if<std::optional<double>>(&ins->y);
+			auto x = std::get_if<std::optional<double>>(&node->x);
+			auto y = std::get_if<std::optional<double>>(&node->y);
 
 			if (x && !*x)
 			{
